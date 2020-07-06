@@ -1,0 +1,232 @@
+#:import NavigationLayout kivymd.navigationdrawer.NavigationLayout
+#:import MDSeparator kivymd.cards.MDSeparator
+#:import MDToolbar kivymd.toolbar.MDToolbar
+#:import MDRaisedButton kivymd.button.MDRaisedButton
+#:import MDRectangleFlatIconButton kivymd.button.MDRectangleFlatIconButton
+#:import MDIconButton kivymd.button.MDIconButton
+#:import MDTextField kivymd.textfields.MDTextField
+#:import MDRectangleFlatIconButton kivymd.button.MDRectangleFlatIconButton
+#:import utils kivy.utils
+#:import MDLabel kivymd.label.MDLabel
+#:import MDCheckbox kivymd.selectioncontrols.MDCheckbox
+#:import MDCard kivymd.cards
+
+# <MESSAGE_RENDER@TwoLineAvatarIconListItem>:
+#     text: 'fisrt'
+#     secondary_text: 'Sdfkldkfklklf'
+#     AvatarSampleWidget: 
+#         source: 'pic.png'
+
+BoxLayout:
+    orientation:'vertical'
+
+    MDToolbar:
+        id: toolbar
+        title: 'LEVEL ADVISOR'
+        md_bg_color: app.theme_cls.primary_color
+        right_action_items: [['menu', lambda x: app.lock_menu_button()]]
+        left_action_items: [['help', lambda x: app.show_dialog()]]
+
+    NavigationLayout:
+        id: na
+        MDNavigationDrawer:
+            drawer_logo: 'umyu1.png'
+            NavigationDrawerSubheader:
+                text: "Communication is always important"
+            NavigationDrawerIconButton:
+                icon: 'home'
+                text: 'Home'
+                on_release: manager.current = 'home'
+            NavigationDrawerIconButton:
+                icon: 'refresh'
+                text: 'Refresh'
+                on_release: app.refresh()
+            NavigationDrawerIconButton:
+                icon: 'lock'
+                text: 'Log Out'
+                on_release: manager.current = 'scan'
+            NavigationDrawerIconButton:
+                icon: 'account-outline'
+                text: 'My Students'
+                on_release: app.studentslist()
+            
+
+        ScreenManager:
+            id: manager
+            Screen:
+                name: 'login'
+                FloatLayout:
+                    Background:
+                        canvas.before:
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+                                source: 'h.png'
+                    GridLayout:
+                        id: sign_up_grid
+                        size_hint: .8,.6
+                        pos_hint: {'top':.8, 'right':.9}
+                        spacing: dp(2)
+                        cols: 1
+                        MDTextField:
+                            hint_text: 'Enter your Email...'
+                            id: email_input
+                        
+                        MDTextField:
+                            hint_text: 'Enter password...'
+                            id: password_input
+                            password: True
+
+                        GridLayout:
+                            size_hint_y:.1
+                            cols: 4
+                            spacing: dp(1)
+                            padding: 20
+                            MDCheckbox:
+                                group: 'h'
+                                on_active: app.active(100)
+                            MDCheckbox:
+                                group: 'h'
+                                on_active: app.active(200)
+                            MDCheckbox:
+                                group: 'h'
+                                on_active: app.active(300)
+                            MDCheckbox:
+                                group: 'h'
+                                on_active: app.active(400)
+                            Label:
+                                text: '100'
+                                color: .5,.5,.5,1
+                            Label:
+                                text: '200'
+                                color: .5,.5,.5,1
+                            Label:
+                                text: '300'
+                                color: .5,.5,.5,1
+                            Label:
+                                text: '400'
+                                color: .5,.5,.5,1
+
+
+                        MDRaisedButton:
+                            text: 'SIGN UP'
+                            size_hint_x: .9
+                            on_release: app.firebase.sign_up(email_input.text, password_input.text)
+
+
+                    Label:
+                        text: ''
+                        pos_hint: {'top': .2, 'right':.5}
+                        size_hint: .1,.1
+                        bold: True
+                        color: (1,.1,.1,1)
+                        font_size: 21
+                        id: error_label
+
+#-------------------------------------------------------------------------------------
+#        HOME SCREEN                                                                ##
+#_____________________________________________________________________________________
+            Screen:
+                name: 'home'
+                FloatLayout:
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        pos_hint: {'top':1, "right":.95}
+                        size_hint: .9,.1
+                        spacing: dp(30)
+                        
+                        MDTextField:
+                            id: users
+                            hint_text: "Enter student's username"
+                            helper_text: 'Make sure you did not mis-spell it'
+                            helper_text_mode: 'persistent'
+                            size_hint_x: .6
+                        MDIconButton:
+                            icon: 'help'
+                            on_release: app.show_dialoghelp()
+
+                    ScrollView:
+                        pos_hint: {'top':.88, 'right':.95}
+                        size_hint: .9,.75
+                        BoxLayout:
+                            size_hint_y: None
+                            height: self.minimum_height
+                            spacing:5
+                            padding:5
+                            orientation: 'vertical'
+                            id: box 
+
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        pos_hint: {'top':.13, "right":.95}
+                        size_hint: .9,.1
+                        spacing: dp(30)
+                        
+                        MDTextField:
+                            id: send_to
+                            hint_text: 'Enter your message here...'
+                            helper_text: 'Communication is the key'
+                            helper_text_mode: 'persistent'
+                            size_hint_x: .6
+                        MDRaisedButton:
+                            text: 'SEND'
+                            on_release: app.send_message()
+                        
+
+#-------------------------------------------------------------------------------------
+#        S SCREEN
+#_____________________________________________________________________________________
+
+            Screen:
+                name: 'scan'
+                MDCard:
+                    orientation: 'vertical'
+                    size_hint: .9,.9
+                    elevation: 8
+                    pos: 14,22
+                    Image:
+                        source: 'new.png'
+                        size_hint_y:.4
+                        allow_stretch: True
+                        keep_ratio: False
+                    BoxLayout:
+                        padding: 20
+                        size_hint_y: .6
+                        orientation: 'vertical'
+                        MDRaisedButton:
+                            text: 'LOG ME OUT'
+                            size_hint_x: 1
+                            on_release: app.log_out()
+                        MDLabel:
+                            text: ''
+                            size_hint_y: 0.5
+
+                    
+
+                           
+
+#-------------------------------------------------------------------------------------
+#        ABOUT SCREEN
+#_____________________________________________________________________________________
+       
+            Screen:
+                name: 'students'
+                MDCard:
+                    orientation: 'vertical'
+                    size_hint: .9,.9
+                    elevation: 6
+                    pos: 14,22
+                    MDRaisedButton:
+                        text:'Student List'
+                        size_hint_x:1
+                        size_hint_y:.1
+                    ScrollView:
+                        id: scroll
+                        size_hint_y:.9
+                        do_scroll_x: False  # Important for MD compliance
+                        MDList:
+                            id: students_list
+                            padding:10
+                            spacing:10
+
+       
